@@ -14,10 +14,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
@@ -50,6 +47,10 @@ public class CategoriesData implements Serializable {
     @JoinColumn(name = "CATEGORY_ID", referencedColumnName = "CATEGORY_ID")
     @ManyToOne(optional = false)
     private Categories categoryId;
+    @Column(name = "PUBLISH_URL")
+    private String publishUrl;
+    @Column(name = "DEMO_URL")
+    private String demoUrl;
 
     public CategoriesData() {
     }
@@ -128,6 +129,22 @@ public class CategoriesData implements Serializable {
 
     public void setCategoryId(Categories categoryId) {
         this.categoryId = categoryId;
+    }
+
+    public String getPublishUrl() {
+        return publishUrl;
+    }
+
+    public void setPublishUrl(String publishUrl) {
+        this.publishUrl = publishUrl;
+    }
+
+    public String getDemoUrl() {
+        return demoUrl;
+    }
+
+    public void setDemoUrl(String demoUrl) {
+        this.demoUrl = demoUrl;
     }
 
 }

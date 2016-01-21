@@ -24,11 +24,11 @@ import org.jsoup.select.Elements;
  * @author GLB-214
  */
 public class CrawlingEachUrlData implements Callable<String> {
-
+    
     Categories objCategories = null;
     CategoriesData objCategoriesData;
     ClonePhpDaoImpl objClonePhpDaoImpl;
-
+    
     public CrawlingEachUrlData(Categories objCategories, ClonePhpDaoImpl objClonePhpDaoImpl) {
         this.objCategories = objCategories;
         this.objClonePhpDaoImpl = objClonePhpDaoImpl;
@@ -51,51 +51,53 @@ public class CrawlingEachUrlData implements Callable<String> {
         String PostID = "";
         String PostDate = "";
         String PostHits = "";
-
+        String publishUrl = "";
+        String demoUrl = "";
+        
         String response = "";
         response = new GetRequestHandler().doGetRequest(new URL(Url));
-
+        
         Document doc = Jsoup.parse(response);
-
+        
         Elements ele = doc.select("table[class=postlisting] tbody tr td a");
         for (Element ele1 : ele) {
             objCategoriesData = new CategoriesData();
-
+            
             String href = "http://clonephp.com/" + ele1.attr("href");
             System.out.println("Href : " + href);
-
+            
             String responseDetails = "";
             responseDetails = new GetRequestHandler().doGetRequest(new URL(href));
             Document detailsDoc = Jsoup.parse(responseDetails);
-
+            
             try {
                 Element eleTitle = detailsDoc.select("table[class=postheader] tr td h1").first();
                 title = eleTitle.text();
                 System.out.println("Title  : " + title);
             } catch (Exception e) {
             }
-
+            
             try {
                 Element eleImage = detailsDoc.select("table[class=postpics] tbody span img").first();
                 ImageUrl = "http://clonephp.com/" + eleImage.attr("src");
                 System.out.println("Image Url : " + ImageUrl);
             } catch (Exception e) {
             }
-
+            
             try {
                 Element eleRating = detailsDoc.select("div[class=ratingblock] p").first();
                 rating = eleRating.text().replace("", "");
                 System.out.println("Rating : " + rating);
             } catch (Exception e) {
             }
-
+            
             try {
                 Element eleDescription = detailsDoc.select("div[id=wrap]").first();
                 description = eleDescription.text();
                 System.out.println("Description : " + description);
             } catch (Exception e) {
             }
-
+            
             try {
                 Element eleID = detailsDoc.select("table[class=postheader] tr td").first();
                 String eleIDS = eleID.text();
@@ -109,7 +111,21 @@ public class CrawlingEachUrlData implements Callable<String> {
                 System.out.println("Post Hits : " + PostHits);
             } catch (Exception e) {
             }
-
+            
+            try {
+                Element elePublish = detailsDoc.select("div[id=listingTools] ul li a").first();
+                publishUrl = elePublish.attr("href");
+                System.out.println("Publish Url : " + publishUrl);
+            } catch (Exception e) {
+            }
+            
+            try {
+                Element eleDemo = detailsDoc.select("div[id=listingTools] ul li a").get(1);
+                demoUrl = eleDemo.attr("href");
+                System.out.println("Demo Url : " + demoUrl);
+            } catch (Exception e) {
+            }
+            
             objCategoriesData.setCategoryId(objCategories);
             objCategoriesData.setTitle(title);
             objCategoriesData.setImageUrl(ImageUrl);
@@ -118,11 +134,13 @@ public class CrawlingEachUrlData implements Callable<String> {
             objCategoriesData.setPostId(PostID);
             objCategoriesData.setPostDate(PostDate);
             objCategoriesData.setPostHits(PostHits);
-
+            objCategoriesData.setPublishUrl(publishUrl);
+            objCategoriesData.setDemoUrl(demoUrl);
+            
             objClonePhpDaoImpl.insertCategoriesCrawledData(objCategoriesData);
-
+            
             System.out.println("============================================================");
-
+            
         }
         try {
             System.out.println("pagination");
@@ -137,7 +155,7 @@ public class CrawlingEachUrlData implements Callable<String> {
             System.out.println("Page Not Avaliable");
         }
     }
-
+    
     @Override
     public String call() {
         try {
@@ -147,5 +165,5 @@ public class CrawlingEachUrlData implements Callable<String> {
         }
         return "done";
     }
-
+    
 }

@@ -7,10 +7,8 @@ package com.clonephpscrapper.crawler;
 
 import com.clonephpscrapper.dao.ClonePhpDaoImpl;
 import com.clonephpscrapper.entity.Categories;
-import static com.clonephpscrapper.utility.FetchPageWithProxy.fetchPage;
 import com.clonephpscrapper.utility.GetRequestHandler;
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -66,7 +64,7 @@ public class ClonePhpScrapper {
         Elements ele = doc.select("table[class=dir] tbody tr td table[class=dir_cat] tbody tr th a");//.first();
 
         for (Element ele1 : ele) {
-            objCategories= new Categories();
+            objCategories = new Categories();
 
             String categoryName = ele1.text();
             String categoryUrl = "http://clonephp.com/" + ele1.attr("href");
@@ -83,14 +81,14 @@ public class ClonePhpScrapper {
         }
 
         List<Future<String>> list = new ArrayList<Future<String>>();
-        ExecutorService executor = Executors.newFixedThreadPool(10);
+        ExecutorService executor = Executors.newFixedThreadPool(5);
 
         List<Categories> listCatogories = objClonePhpDaoImpl.getCategoriesDataList();
 
         for (Categories listCatogory : listCatogories) {
 
             try {
-                Callable worker = new CrawlingEachUrlData(listCatogory,objClonePhpDaoImpl);
+                Callable worker = new CrawlingEachUrlData(listCatogory, objClonePhpDaoImpl);
                 Future<String> future = executor.submit(worker);
                 list.add(future);
             } catch (Exception exx) {
